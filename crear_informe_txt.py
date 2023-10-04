@@ -22,7 +22,10 @@ def crear_informe_txt(cuit, primerComprobante, ultimoComprobante, periodo, valor
         archivo_txt.write(f"CUIT: {cuit}\n")
         archivo_txt.write(f"Razon Social: {razonSocial}\n")
         archivo_txt.write(f"Punto de Venta: {puntoDeVenta}\n")
-        archivo_txt.write(f"Comprobantes desde <{primerComprobante}> hasta <{ultimoComprobante}>\n")
+        if primerComprobante == "No se encontraron Facturas C en los datos":
+            archivo_txt.write(f"<<{primerComprobante}>>\n")
+        else:
+            archivo_txt.write(f"Comprobantes desde <{primerComprobante}> hasta <{ultimoComprobante}>\n") 
         archivo_txt.write(f"Periodo: {periodo}\n")
         archivo_txt.write(f"Total: {valorTotal}\n")
         archivo_txt.write("------------------------------\n")
