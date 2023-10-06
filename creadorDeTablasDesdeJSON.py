@@ -10,6 +10,7 @@ import locale
 #from crearPDF import crearPDF
 
 from crear_informe_txt import crear_informe_txt
+from creadorDeData import crearPDF
 
 # Variables globales para rastrear el estado del procesamiento
 archivos_procesados = 0
@@ -108,6 +109,7 @@ def cargar_json(ruta,carpeta,procesoElegido):
             crear_informe_txt(data_cuit,primerComprobante,ultimoComprobante,periodo,valorTotal,puntoDeVenta,carpeta)
         else:
             #Aca voy a crear para llamar a Crear pdf
+            crearPDF(data_cuit, puntoDeVenta, periodo, valorTotal, datosComprobante, carpeta)
             print("Otro proceso")
         print("----")
     except Exception as e:
