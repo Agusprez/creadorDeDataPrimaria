@@ -100,7 +100,7 @@ def cargar_json(ruta,carpeta,procesoElegido):
         if primerComprobante is None:
             primerComprobante = "No se encontraron Facturas C en los datos"
             
-        print("----")
+        #print("----")
         puntoDeVenta = (datosComprobante[0].get("Punto de Venta"))
         valorTotal = totalPositivo - totalNegativo
         #crearPDF(data_cuit, primerComprobante, ultimoComprobante, periodo, valorTotal,datosComprobante)
@@ -110,8 +110,8 @@ def cargar_json(ruta,carpeta,procesoElegido):
         else:
             #Aca voy a crear para llamar a Crear pdf
             crearPDF(data_cuit, puntoDeVenta, periodo, valorTotal, datosComprobante, carpeta)
-            print("Otro proceso")
-        print("----")
+            #print("Otro proceso")
+        #print("----")
     except Exception as e:
         print("Error al cargar el archivo JSON:", e)
 
