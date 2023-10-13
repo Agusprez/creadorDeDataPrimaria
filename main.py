@@ -9,7 +9,7 @@ from datetime import datetime
 import locale
 #from crearPDF import crearPDF
 
-from crear_informe_txt import crear_informe_txt
+from crear_informe_txt import crear_informe_txt, crear_informe_errorFecha
 from creadorDeData import crearPDF
 
 # Variables globales para rastrear el estado del procesamiento
@@ -113,7 +113,10 @@ def cargar_json(ruta,carpeta,procesoElegido,periodo):
                 print(f"Archivo: {ruta}")
         if primerComprobante is None:
             primerComprobante = "No se encontraron Facturas C en los datos"
-            
+        # Añadir manejo de excepción si no se encontraron datos en el rango de fechas
+        if not datosComprobante:
+            raise Exception("No se encontraron datos en el rango de fechas deseado.")
+
         #print("----")
         puntoDeVenta = (datosComprobante[0].get("Punto de Venta"))
         valorTotal = totalPositivo - totalNegativo
@@ -126,8 +129,12 @@ def cargar_json(ruta,carpeta,procesoElegido,periodo):
             crearPDF(data_cuit, puntoDeVenta, periodo, valorTotal, datosComprobante, carpeta)
             #print("Otro proceso")
         #print("----")
+
     except Exception as e:
-        print("Error al cargar el archivo JSON:", e)
+        if str(e) == "No se encontraron datos en el rango de fechas deseado.":
+            print("Error: ",e)
+            crear_informe_errorFecha(data_cuit,carpeta,mes,anio)
+
 
 #Funcion para leer los datos que tengo cargado en un JSON, para poder tener Razon Social, y otros datos
 
