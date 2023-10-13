@@ -20,11 +20,11 @@ def crearPDF(cuit, punto_de_venta, periodo, valor_total, datos_comprobante, carp
 
   USER = datosJSON.get("USER")
   CONTRIBUYENTE = datosJSON.get("RAZON SOCIAL")
-  LEGAJO = datosJSON.get("LEGAJO ")
+  LEGAJO = datosJSON.get("LEGAJO")
   periodo = periodo.upper() 
   #Consideraciones para datos sin valor
 
-  if LEGAJO == "-":
+  if LEGAJO == "-" or LEGAJO == None:
     LEGAJO = "SIN LEGAJO"
 
   if USER == "-":
@@ -53,6 +53,8 @@ def crearPDF(cuit, punto_de_venta, periodo, valor_total, datos_comprobante, carp
   for elemento in datos_comprobante:
     
     tipoDeComp = nombreComp(elemento)
+    valorComp = formatear_numero(elemento["Imp. Total"])
+
 
     if elemento["Nro. Doc. Receptor"] == 0.0:
       nroDocReceptor = ""
@@ -60,18 +62,19 @@ def crearPDF(cuit, punto_de_venta, periodo, valor_total, datos_comprobante, carp
       nroDocReceptor = elemento["Nro. Doc. Receptor"]
 
     if elemento["Denominación Receptor"] == 0.0:
-      denomReceptor = "-"
+      denomReceptor = "CONS. FINAL"
     else: 
       denomReceptor = elemento["Denominación Receptor"][:16]
+    
     
       
 
     tablaDeComprobantes.add_row([elemento["Fecha"], tipoDeComp, elemento["Número Desde"], 
                                  nroDocReceptor, 
                                  denomReceptor, 
-                                 elemento["Imp. Total"]])
+                                 valorComp])
 
-
+  valor_total = formatear_numero(valor_total)
   tablaDeComprobantes.add_row(["","","","","",""])
   tablaDeComprobantes.add_row(["","","","","Importe Total",valor_total])
 
@@ -120,3 +123,11 @@ def nombreComp(elemento):
           tipoDeComp = "Credito C"
     return tipoDeComp
 
+def formatear_numero(numero):
+    # Convertir el número a punto flotante
+    numero_flotante = float(numero)
+    
+    # Aplicar formato con dos decimales
+    numero_formateado = "{:.2f}".format(numero_flotante)
+    
+    return numero_formateado

@@ -2,3 +2,6 @@ BBDD.json
 __pycache__/
 generatorMCEtoJSON-main/
 recibos_de_sueldos.pdf
+dist/
+build/
+setup.py

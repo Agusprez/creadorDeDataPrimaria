@@ -36,7 +36,7 @@ def texto_a_pdf(archivo_txt, archivo_pdf):
         # Inicializa la posición de escritura en la página
         x, y = 50, alto - 50
         # Configura la fuente y el tamaño de fuente
-        c.setFont('CourierNew', 10)
+        c.setFont('Courier-Bold', 10)
 
         # Agrega cada línea al PDF
         for linea in grupo:
@@ -82,12 +82,12 @@ def texto_a_pdf_PAGINADO(archivo_txt, archivo_pdf):
 
         # Agrega el encabezado al inicio de cada página
         for linea_encabezado in encabezado:
-            c.setFont('CourierNew', 10)
+            c.setFont('Courier-Bold', 10)
             c.drawString(x, y, linea_encabezado.rstrip('\n'))
             y -= 14
 
         # Configura la fuente y el tamaño de fuente
-        c.setFont('CourierNew', 10)
+        c.setFont('Courier-Bold', 10)
 
         # Agrega cada línea al PDF
         for linea in grupo:

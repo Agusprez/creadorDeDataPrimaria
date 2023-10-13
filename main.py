@@ -1,7 +1,7 @@
 import json
 import os
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import simpledialog, filedialog
 from tkinter import messagebox
 import pandas as pd
 import time
@@ -20,7 +20,7 @@ tiempo_inicio = 0
 
 # FUNCION PARA VER CUANTOS ARCHIVOS JSON HAY QUE PROCESAR
 
-def procesar_carpeta(carpeta,procesoElegido):
+def procesar_carpeta(carpeta,procesoElegido,periodo):
 
     global archivos_procesados, archivos_generados, errores,tiempo_inicio
     archivos_procesados = 0
@@ -33,7 +33,7 @@ def procesar_carpeta(carpeta,procesoElegido):
             ruta_archivo = os.path.join(carpeta, archivo)
             archivos_procesados += 1
             try:
-                cargar_json(ruta_archivo,carpeta,procesoElegido)
+                cargar_json(ruta_archivo,carpeta,procesoElegido,periodo)
                 archivos_generados += 1
             except Exception as e:
                 print(f"Error al procesar {ruta_archivo}: {e}")
@@ -44,7 +44,17 @@ def procesar_carpeta(carpeta,procesoElegido):
 # FUNCION PARA CARGAR EL JSON Y MOSTRAR POR CONSOLA LOS VALORES DESEADOS DEL JSON
 
 
-def cargar_json(ruta,carpeta,procesoElegido):
+def cargar_json(ruta,carpeta,procesoElegido,periodo):
+    diaInicio = "01"
+    diaFin = periodo[:2]
+    mes = periodo[2:4]
+    anio = periodo[4:]
+
+    diaInicio = int(diaInicio)
+    diaFin = int(diaFin)
+    mes = int(mes)
+    anio = int(anio)
+
     try:
         with open(ruta, "r", encoding="utf-8") as json_file:
             json_data = json.load(json_file)
@@ -69,34 +79,38 @@ def cargar_json(ruta,carpeta,procesoElegido):
         datosComprobante = []
 
         for i, item in enumerate(data_dict):
-            datos_comprobante_actual = {}
-            #Esta iteracion hace referencia cada uno de los datos dentro de Datos Facturacion del JSON
-            for clave in ["Fecha", "Tipo", "Punto de Venta", "Número Desde", "Nro. Doc. Receptor", "Denominación Receptor", "Imp. Total"]:
-                if clave in item:
-                    if clave == "Fecha":
-                        fecha = datetime.strptime(item[clave], "%d/%m/%Y")
-                        periodo = fecha.strftime("%B %Y")  # Formato "mes año"
-                    datos_comprobante_actual[clave] = item[clave]
-                    if clave == "Tipo":
-                        if item[clave] == "13 - Nota de Crédito C":
-                            totalNegativo += item.get("Imp. Total", 0)
-                            #datosComprobante.append({"clave": clave, "valor": item[clave]})
-                        elif item[clave] == "9 - Recibo C":
-                            totalPositivo = totalPositivo    
-                        elif item[clave] == "213 - Nota de Crédito Electrónica MiPyMEs (FCE) C":
-                            totalNegativo += item.get("Imp. Total", 0)
-                        else: 
-                            totalPositivo += item.get("Imp. Total", 0)   
-                            #datosComprobante.append({"clave": clave, "valor": item[clave]}) 
-
-
-
-            datosComprobante.append(datos_comprobante_actual)
-            if item["Tipo"] == "11 - Factura C":
-                if primerComprobante is None:
-                    primerComprobante = item.get("Número Desde")
-                ultimoComprobante = item.get("Número Desde")
+            if "Fecha" in item:
+                fecha = datetime.strptime(item["Fecha"], "%d/%m/%Y")
+                periodo = fecha.strftime("%B %Y")
         
+                # Definir el rango de fechas deseado (por ejemplo, agosto de 2023)
+                fecha_inicio = datetime(anio, mes, diaInicio)
+                fecha_fin = datetime(anio, mes, diaFin)
+        
+                if fecha_inicio <= fecha <= fecha_fin:
+                    # Continuar con el procesamiento solo si la fecha está dentro del rango
+                    datos_comprobante_actual = {}
+                    for clave in ["Fecha", "Tipo", "Punto de Venta", "Número Desde", "Nro. Doc. Receptor", "Denominación Receptor", "Imp. Total"]:
+                        if clave in item:
+                            if clave == "Tipo":
+                                if item[clave] == "13 - Nota de Crédito C":
+                                    totalNegativo += item.get("Imp. Total", 0)
+                                elif item[clave] == "9 - Recibo C":
+                                    totalPositivo = totalPositivo    
+                                elif item[clave] == "213 - Nota de Crédito Electrónica MiPyMEs (FCE) C":
+                                    totalNegativo += item.get("Imp. Total", 0)
+                                else: 
+                                    totalPositivo += item.get("Imp. Total", 0)
+                            datos_comprobante_actual[clave] = item[clave]
+            
+                    datosComprobante.append(datos_comprobante_actual)
+            
+                    if item["Tipo"] == "11 - Factura C":
+                        if primerComprobante is None:
+                            primerComprobante = item.get("Número Desde")
+                        ultimoComprobante = item.get("Número Desde")
+            else:
+                print(f"Archivo: {ruta}")
         if primerComprobante is None:
             primerComprobante = "No se encontraron Facturas C en los datos"
             
@@ -131,11 +145,14 @@ def mostrar_resumen():
 
     messagebox.showinfo("Resumen del Proceso", mensaje)
 
-#Funcion para seleccionar la carpeta a analizar para procesar los archivos
+# Función para seleccionar la carpeta a analizar para procesar los archivos
 def seleccionar_carpeta(procesoElegido):
-    carpeta = filedialog.askdirectory()
-    if carpeta:
-        procesar_carpeta(carpeta, procesoElegido)
+    # Pedir al usuario que ingrese el período
+    periodo = simpledialog.askstring("Ingresar Periodo", "Por favor, ingresa el período (Formato ddmmaaaa):")
+    if periodo is not None:
+        carpeta = filedialog.askdirectory()
+        if carpeta:
+            procesar_carpeta(carpeta, procesoElegido, periodo)
 
 # Crear la ventana de la aplicación
 ventana = tk.Tk()
