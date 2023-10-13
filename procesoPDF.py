@@ -17,6 +17,8 @@ def texto_a_pdf(archivo_txt, archivo_pdf):
     # Carga la fuente "Courier New" (asegúrate de tener la fuente instalada en tu sistema)
     fuente = os.path.join(dir_actual, "Courier_New.ttf")
     pdfmetrics.registerFont(TTFont('CourierNew', fuente))
+    
+    
     #pdfmetrics.registerFont(TTFont('CourierNew', 'Courier_New.ttf'))
 
     # Crea un archivo PDF con el tamaño de página A4 en orientación horizontal
@@ -34,7 +36,7 @@ def texto_a_pdf(archivo_txt, archivo_pdf):
 
     for grupo in grupos_lineas:
         # Inicializa la posición de escritura en la página
-        x, y = 50, alto - 50
+        x, y = 40, alto - 50
         # Configura la fuente y el tamaño de fuente
         c.setFont('Courier-Bold', 10)
 
@@ -78,7 +80,7 @@ def texto_a_pdf_PAGINADO(archivo_txt, archivo_pdf):
 
     for numero_pagina, grupo in enumerate(grupos_lineas, start=1):
         # Inicializa la posición de escritura en la página
-        x, y = 50, alto - 50
+        x, y = 40, alto - 50
 
         # Agrega el encabezado al inicio de cada página
         for linea_encabezado in encabezado:
