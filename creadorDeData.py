@@ -6,6 +6,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 import os
+import locale
 
 dir_actual = os.path.dirname(__file__)
 
@@ -47,8 +48,7 @@ def crearPDF(cuit, punto_de_venta, periodo, valor_total, datos_comprobante, carp
   #tablaDeComprobantes.align["Nro"] = "r"
   tablaDeComprobantes.align["Total"] = "r"
   # 10 - 10 - 8 - 11 - 16 - 10
-  tablaDeComprobantes.add_row(["          ","          ","        ","           ","                ","          "])
-
+  tablaDeComprobantes.add_row(["          ","    ","        ","           ","                    ","              "])
   
   for elemento in datos_comprobante:
     
@@ -64,7 +64,7 @@ def crearPDF(cuit, punto_de_venta, periodo, valor_total, datos_comprobante, carp
     if elemento["Denominación Receptor"] == 0.0:
       denomReceptor = "CONS. FINAL"
     else: 
-      denomReceptor = elemento["Denominación Receptor"][:16]
+      denomReceptor = elemento["Denominación Receptor"][:20]
     
     
       
@@ -118,16 +118,19 @@ def nombreComp(elemento):
     if "Tipo" in elemento:
         tipoDeComp = elemento["Tipo"]
         if tipoDeComp == "11 - Factura C": 
-          tipoDeComp = "Factura C"
+          tipoDeComp = "FC"
         elif tipoDeComp == "13 - Nota de Crédito C":
-          tipoDeComp = "Credito C"
+          tipoDeComp = "NC"
     return tipoDeComp
 
 def formatear_numero(numero):
+    # Establecer la configuración local para el formateo
+    locale.setlocale(locale.LC_ALL, '')  # Utiliza la configuración regional predeterminada del sistema
+
     # Convertir el número a punto flotante
     numero_flotante = float(numero)
-    
-    # Aplicar formato con dos decimales
-    numero_formateado = "{:.2f}".format(numero_flotante)
+
+    # Aplicar el formato con separadores de miles y dos decimales
+    numero_formateado = locale.format("%.2f", numero_flotante, grouping=True)
     
     return numero_formateado
