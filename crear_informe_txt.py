@@ -35,7 +35,7 @@ def crear_informe_txt(cuit, primerComprobante, ultimoComprobante, periodo, valor
 def crear_informe_errorFecha(cuit, carpeta,mes, anio):
 
     #Dependiendo de donde esta la carpeta que se eligio para procesar, en esa misma carpeta, se genera el reporte
-    nombreArchivo = carpeta + "/reporteDeError.txt"
+    nombreArchivo = carpeta + "/reporte_de_error.txt"
     
 
     with open(nombreArchivo, "a", encoding="utf-8") as archivo_txt:

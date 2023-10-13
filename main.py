@@ -124,11 +124,13 @@ def cargar_json(ruta,carpeta,procesoElegido,periodo):
         #createPDF(data_cuit,puntoDeVenta,periodo,valorTotal,datosComprobante,carpeta)
         if procesoElegido == "Informe TXT":
             crear_informe_txt(data_cuit,primerComprobante,ultimoComprobante,periodo,valorTotal,puntoDeVenta,carpeta)
-        else:
+        elif procesoElegido == "Informe PDF":
             #Aca voy a crear para llamar a Crear pdf
             crearPDF(data_cuit, puntoDeVenta, periodo, valorTotal, datosComprobante, carpeta)
             #print("Otro proceso")
         #print("----")
+        else:
+            print("Ningun proceso elegido")
 
     except Exception as e:
         if str(e) == "No se encontraron datos en el rango de fechas deseado.":
